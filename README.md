@@ -1,50 +1,169 @@
-# AI News Aggregator - Live Build Repository
+Here is a complete, production-ready `README.md` formatted to expand on your project overview with architecture, prerequisites, local installation, branch breakdown, and environment configuration.
 
-This repository accompanies my 3-hour live coding session where I build a complete AI-powered news aggregator from scratch. This is a **private repository** containing valuable implementation details and deployment strategies used in production environments.
+---
 
-## Project Structure
+# AI News Aggregator
 
-This project is organized across three branches, each corresponding to a different phase of the build:
+An end-to-end AI-powered news aggregator built from scratch. This application scrapes and aggregates news articles across various feeds, leverages Large Language Models (LLMs) for automated summarization, topic tagging, and sentiment analysis, and serves the curated feed via a modern web interface.
 
-- **`master`** - Part 1: Local setup and core functionality
-- **`deployment`** - Part 2: Deployment configuration and infrastructure
-- **`deployment-final`** - Part 3: Final optimizations and production-ready changes
+---
 
-Each branch serves as an intermediate checkpoint, allowing you to reference the exact state of the codebase at any point during the video.
+## Architecture Overview
 
-## How This Video Works
+```
+ ┌────────────────┐     ┌──────────────────┐     ┌──────────────────┐
+ │  News Sources  │ ──> │ Ingestion Engine │ ──> │   LLM Pipeline   │
+ │ (RSS / APIs)   │     │ (Fetcher/Parser) │     │ (Summary/Tags)   │
+ └────────────────┘     └──────────────────┘     └────────┬─────────┘
+                                                          │
+ ┌────────────────┐     ┌──────────────────┐              │
+ │  Web Frontend  │ <── │   Backend API    │ <────────────┘
+ │ (React / UI)   │     │ (FastAPI/Node)   │
+ └────────────────┘     └────────┬─────────┘
+                                 │
+                        ┌────────┴─────────┐
+                        │ Database / Cache │
+                        │ (Postgres/Redis) │
+                        └──────────────────┘
 
-This is a **live coding build**, not a traditional step-by-step tutorial. Here's what to expect:
+```
 
-- **Fast-paced development** - I code at my natural pace, leveraging AI tools extensively
-- **AI-assisted workflow** - You won't see every code snippet or file generation in real-time
-- **Real-world approach** - This condenses 20-40 hours of learning into a single session
-- **Not cookie-cutter** - Unlike structured tutorials, this reflects how coding actually happens in practice
+* **Ingestion Pipeline:** Scheduled workers fetch raw articles from multiple RSS feeds and public APIs.
+* **AI Processing Layer:** Deduplicates content, extracts clean article bodies, and queries an LLM to generate concise summaries, categorize topics, and assess sentiment.
+* **Backend API:** Stores structured data and exposes REST/GraphQL endpoints for pagination, filtering, and search.
+* **Frontend Dashboard:** A responsive user interface to browse categorized summaries, filter by sentiment or topic, and view real-time updates.
 
-## How to Follow Along
+---
 
-### Recommended Approach (Maximum Learning)
+## Branch Breakdown & Checkpoints
 
-1. **Clone this repository** before starting the video
-2. **Keep a local copy ready** on your system as you code along
-3. **Use intermediate checkpoints** - When I make major updates or run tests, pause and:
-   - Reference the corresponding branch in this repository
-   - Copy relevant code snippets into your project
-   - Use AI coding assistants to help you reach the same checkpoint
-4. **Iterate step-by-step** - Don't rush ahead. Ensure each phase works before moving forward
-5. **Expect confusion** - Some parts will move fast and may not be immediately clear. This is where real learning happens
+This repository is structured across three progression branches:
 
-### Alternative Approach (Not Recommended)
+| Branch | Phase | Scope & Milestones |
+| --- | --- | --- |
+| **`master`** | **Part 1: Core Setup** | Local development environment, RSS ingestion workers, raw data parsing, initial LLM summarization pipeline, and local SQLite/Postgres schemas. |
+| **`deployment`** | **Part 2: Infrastructure** | Docker containerization (`Dockerfile`, `docker-compose.yml`), cloud database integration, background task scheduling (e.g., Celery/Cron), and reverse proxy setup. |
+| **`deployment-final`** | **Part 3: Production Ready** | Caching layer (Redis), rate limiting, error monitoring (Sentry), CI/CD workflows, edge caching, and cost-optimized LLM batching. |
 
-You can skip ahead to the `deployment-final` branch and try to get everything working, but you'll miss the iterative problem-solving process that makes this valuable.
+---
 
-## Why This Approach?
+## Prerequisites
 
-Traditional tutorials show you the "right way" to do things. This video shows you the **real way** - with AI assistance, rapid iteration, debugging, and adapting on the fly. By following along and hitting the same checkpoints, you'll:
+Ensure you have the following installed on your local machine:
 
-- Learn how to effectively leverage AI coding tools
-- Understand the thought process behind architectural decisions
-- Experience real-world development workflows
-- Build muscle memory through hands-on practice
+* **Node.js** (v18+ or v20+) / **Python** (3.10+) *(depending on your backend setup)*
+* **Docker** & **Docker Compose**
+* **Git**
+* API Keys:
+* OpenAI / Anthropic API Key (or local Ollama instance)
+* News API / RSS credentials (if applicable)
 
-**The most valuable learning happens when you struggle, reference the code, and push through to the next checkpoint.**
+
+
+---
+
+## Getting Started (Local Development)
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd ai-news-aggregator
+
+```
+
+### 2. Configure Environment Variables
+
+Copy the example environment file and add your credentials:
+
+```bash
+cp .env.example .env
+
+```
+
+Fill in the required fields:
+
+```ini
+# LLM Configuration
+LLM_PROVIDER=openai # or anthropic / ollama
+OPENAI_API_KEY=your_openai_api_key_here
+LLM_MODEL=gpt-4o-mini
+
+# Database
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/news_aggregator
+REDIS_URL=redis://localhost:6379/0
+
+# App Config
+PORT=8000
+NODE_ENV=development
+
+```
+
+### 3. Run with Docker Compose
+
+To launch the database, cache, and ingestion services locally:
+
+```bash
+docker-compose up -d
+
+```
+
+### 4. Run Locally Without Docker
+
+**Backend:**
+
+```bash
+# Example for Python/FastAPI
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+
+```
+
+**Frontend:**
+
+```bash
+cd frontend
+npm install
+npm run dev
+
+```
+
+---
+
+## How to Follow the Live Build
+
+This repository is designed for active, iterative learning:
+
+1. **Start on `master**` to build the initial scrapers and LLM integrations.
+2. **Switch to `deployment**` when the video reaches cloud provisioning and container configuration:
+```bash
+git checkout deployment
+
+```
+
+
+3. **Inspect `deployment-final**` to review production hardening, edge-case fixes, and optimizations:
+```bash
+git checkout deployment-final
+
+```
+
+
+
+---
+
+## Key Features
+
+* **Automated Feed Polling:** Regularly syncs with tech, finance, and global news sources.
+* **Smart Deduplication:** Identifies and groups duplicate reporting across outlets.
+* **Semantic Tagging & Summarization:** Extracts 3-bullet executive summaries and high-level sentiment.
+* **Search & Filter:** Filter by tag, read time, sentiment score, or publication date.
+
+---
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
