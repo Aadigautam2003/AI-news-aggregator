@@ -42,12 +42,21 @@ def process_digests(limit: Optional[int] = None) -> dict:
             )
             
             if digest_result:
+                import json
                 repo.create_digest(
                     article_type=article_type,
                     article_id=article_id,
                     url=article["url"],
                     title=digest_result.title,
                     summary=digest_result.summary,
+                    tasks=json.dumps(digest_result.tasks) if digest_result.tasks else None,
+                    deadlines=json.dumps(digest_result.deadlines) if digest_result.deadlines else None,
+                    entities=json.dumps(digest_result.entities) if digest_result.entities else None,
+                    priorities=json.dumps(digest_result.priorities) if digest_result.priorities else None,
+                    decisions=json.dumps(digest_result.decisions) if digest_result.decisions else None,
+                    actionable_plan=digest_result.actionable_plan,
+                    confidence_score=digest_result.confidence_score,
+                    reasoning_context=digest_result.reasoning_context,
                     published_at=article.get("published_at")
                 )
                 processed += 1

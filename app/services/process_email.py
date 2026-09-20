@@ -47,7 +47,15 @@ def generate_email_digest(hours: int = 24, top_n: int = 10) -> EmailDigestRespon
             title=next((d["title"] for d in digests if d["id"] == a.digest_id), ""),
             summary=next((d["summary"] for d in digests if d["id"] == a.digest_id), ""),
             url=next((d["url"] for d in digests if d["id"] == a.digest_id), ""),
-            article_type=next((d["article_type"] for d in digests if d["id"] == a.digest_id), "")
+            article_type=next((d["article_type"] for d in digests if d["id"] == a.digest_id), ""),
+            tasks=next((d.get("tasks") for d in digests if d["id"] == a.digest_id), None),
+            deadlines=next((d.get("deadlines") for d in digests if d["id"] == a.digest_id), None),
+            entities=next((d.get("entities") for d in digests if d["id"] == a.digest_id), None),
+            priorities=next((d.get("priorities") for d in digests if d["id"] == a.digest_id), None),
+            decisions=next((d.get("decisions") for d in digests if d["id"] == a.digest_id), None),
+            actionable_plan=next((d.get("actionable_plan") for d in digests if d["id"] == a.digest_id), None),
+            confidence_score=next((d.get("confidence_score") for d in digests if d["id"] == a.digest_id), None),
+            reasoning_context=next((d.get("reasoning_context") for d in digests if d["id"] == a.digest_id), None)
         )
         for a in ranked_articles
     ]
