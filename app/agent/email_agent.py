@@ -22,6 +22,14 @@ class RankedArticleDetail(BaseModel):
     url: str
     article_type: str
     reasoning: Optional[str] = None
+    tasks: Optional[str] = None
+    deadlines: Optional[str] = None
+    entities: Optional[str] = None
+    priorities: Optional[str] = None
+    decisions: Optional[str] = None
+    actionable_plan: Optional[str] = None
+    confidence_score: Optional[float] = None
+    reasoning_context: Optional[str] = None
 
 
 class EmailDigestResponse(BaseModel):
@@ -31,6 +39,7 @@ class EmailDigestResponse(BaseModel):
     top_n: int
     
     def to_markdown(self) -> str:
+        import json
         markdown = f"{self.introduction.greeting}\n\n"
         markdown += f"{self.introduction.introduction}\n\n"
         markdown += "---\n\n"
@@ -38,6 +47,18 @@ class EmailDigestResponse(BaseModel):
         for article in self.articles:
             markdown += f"## {article.title}\n\n"
             markdown += f"{article.summary}\n\n"
+            if article.actionable_plan:
+                markdown += f"**Actionable Plan:**\n{article.actionable_plan}\n\n"
+            if article.tasks:
+                try:
+                    tasks = json.loads(article.tasks)
+                    if tasks:
+                        markdown += "**Tasks:**\n"
+                        for task in tasks:
+                            markdown += f"- {task}\n"
+                        markdown += "\n"
+                except:
+                    pass
             markdown += f"[Read more →]({article.url})\n\n"
             markdown += "---\n\n"
         

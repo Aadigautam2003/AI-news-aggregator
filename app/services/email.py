@@ -139,10 +139,28 @@ def digest_to_html(digest_response) -> str:
     html_parts.append(f'<div class="introduction">{introduction_html}</div>')
     html_parts.append('<hr>')
     
+    import json
     for article in digest_response.articles:
         html_parts.append(f'<h3>{html.escape(article.title)}</h3>')
         summary_html = markdown.markdown(article.summary, extensions=['extra', 'nl2br'])
         html_parts.append(f'<div>{summary_html}</div>')
+
+        if article.actionable_plan:
+            plan_html = markdown.markdown(article.actionable_plan, extensions=['extra', 'nl2br'])
+            html_parts.append(f'<div><strong>Actionable Plan:</strong><br>{plan_html}</div>')
+
+        if article.tasks:
+            try:
+                tasks = json.loads(article.tasks)
+                if tasks:
+                    html_parts.append('<div><strong>Tasks:</strong><ul>')
+                    for task in tasks:
+                        task_html = markdown.markdown(task, extensions=['extra', 'nl2br'])
+                        html_parts.append(f'<li>{task_html}</li>')
+                    html_parts.append('</ul></div>')
+            except:
+                pass
+
         html_parts.append(f'<p><a href="{html.escape(article.url)}" class="article-link">Read more →</a></p>')
         html_parts.append('<hr>')
     

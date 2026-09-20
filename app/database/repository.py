@@ -201,7 +201,7 @@ class Repository:
         
         return articles
     
-    def create_digest(self, article_type: str, article_id: str, url: str, title: str, summary: str, published_at: Optional[datetime] = None) -> Optional[Digest]:
+    def create_digest(self, article_type: str, article_id: str, url: str, title: str, summary: str, published_at: Optional[datetime] = None, tasks: Optional[str] = None, deadlines: Optional[str] = None, entities: Optional[str] = None, priorities: Optional[str] = None, decisions: Optional[str] = None, actionable_plan: Optional[str] = None, confidence_score: Optional[float] = None, reasoning_context: Optional[str] = None) -> Optional[Digest]:
         digest_id = f"{article_type}:{article_id}"
         existing = self.session.query(Digest).filter_by(id=digest_id).first()
         if existing:
@@ -221,6 +221,14 @@ class Repository:
             url=url,
             title=title,
             summary=summary,
+            tasks=tasks,
+            deadlines=deadlines,
+            entities=entities,
+            priorities=priorities,
+            decisions=decisions,
+            actionable_plan=actionable_plan,
+            confidence_score=confidence_score,
+            reasoning_context=reasoning_context,
             created_at=created_at
         )
         self.session.add(digest)
@@ -241,6 +249,14 @@ class Repository:
                 "url": d.url,
                 "title": d.title,
                 "summary": d.summary,
+                "tasks": d.tasks,
+                "deadlines": d.deadlines,
+                "entities": d.entities,
+                "priorities": d.priorities,
+                "decisions": d.decisions,
+                "actionable_plan": d.actionable_plan,
+                "confidence_score": d.confidence_score,
+                "reasoning_context": d.reasoning_context,
                 "created_at": d.created_at
             }
             for d in digests

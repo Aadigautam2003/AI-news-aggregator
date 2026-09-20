@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import Column, String, DateTime, Text
+from sqlalchemy import Column, String, DateTime, Text, Float
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -53,5 +53,15 @@ class Digest(Base):
     url = Column(String, nullable=False)
     title = Column(String, nullable=False)
     summary = Column(Text, nullable=False)
+
+    tasks = Column(Text, nullable=True) # JSON string
+    deadlines = Column(Text, nullable=True) # JSON string
+    entities = Column(Text, nullable=True) # JSON string
+    priorities = Column(Text, nullable=True) # JSON string
+    decisions = Column(Text, nullable=True) # JSON string
+    actionable_plan = Column(Text, nullable=True)
+    confidence_score = Column(Float, nullable=True)
+    reasoning_context = Column(Text, nullable=True)
+
     created_at = Column(DateTime, default=datetime.utcnow)
 
